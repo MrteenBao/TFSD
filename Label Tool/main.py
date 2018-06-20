@@ -195,9 +195,7 @@ class LabelTool():
         self.total = len(self.imageList)
 
          # set up output dir
-        self.outDir = os.path.join(r'./Labels', '%03d' %(self.category))
-        if not os.path.exists(self.outDir):
-            os.mkdir(self.outDir)
+        
 
         # load example bboxes
         #self.egDir = os.path.join(r'./Examples', '%03d' %(self.category))
@@ -429,7 +427,8 @@ class LabelTool():
         self.bboxList = []
 
     def prevImage(self, event = None):
-         
+        if len(self.bboxList) == 0 and self.flagEdit == 1:
+            self.saveImage()
         if len(self.bboxList) > 0:
 
             self.saveImage()
@@ -438,7 +437,8 @@ class LabelTool():
             self.loadImage()
 
     def nextImage(self, event = None):
-        
+        if len(self.bboxList) == 0 and self.flagEdit == 1:
+            self.saveImage()
         if len(self.bboxList) > 0:
             
             self.saveImage()
