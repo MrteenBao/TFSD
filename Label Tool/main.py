@@ -337,7 +337,7 @@ class LabelTool():
 
     def saveImage(self):
         self.flagEdit = 0
-        self.addNightState()
+	self.addNightState()
         #self.moveImageToFolder()
 
         exif_dict = piexif.load(self.imagepath)
@@ -364,8 +364,6 @@ class LabelTool():
 
     def mouseClick(self, event):
         w,h = self.img.size
-        rw = 960/w
-        rh = 540/h
         if self.STATE['click'] == 0:
             self.STATE['x'], self.STATE['y'] = event.x, event.y
         else:
@@ -373,11 +371,11 @@ class LabelTool():
             y1, y2 = min(self.STATE['y'], event.y), max(self.STATE['y'], event.y)
             self.disp.config(text = 'size: %d' %(x2-x1))
             if (x2-x1) >= self.boundingLimit:
-                self.bboxList.append((self.currentLabelclass,x1*rw, y1*rh, x2*rw, y2*rh))
+                self.bboxList.append((self.currentLabelclass,int(x1*w/960), int(y1*h/540), int(x2*w/960), int(y2*h/540)))
                 print self.bboxList
                 self.bboxIdList.append(self.bboxId)
                 self.bboxId = None
-                self.listbox.insert(END,'%s : (%d, %d)->(%d, %d)' %(self.currentLabelclass,x1*rw, y1*rh, x2*rw, y2*rh))
+                self.listbox.insert(END,'%s : (%d, %d)->(%d, %d)' %(self.currentLabelclass,int(x1)  *w/960, int(y1)*h/540, int(x2)*w/960, int(y2)*h/540))
                 self.listbox.itemconfig(len(self.bboxIdList) - 1, fg = COLORS[(len(self.bboxIdList) - 1) % len(COLORS)])
             else:
                 print 'Not enough size for bounding'
@@ -430,7 +428,6 @@ class LabelTool():
         if len(self.bboxList) == 0 and self.flagEdit == 1:
             self.saveImage()
         if len(self.bboxList) > 0:
-
             self.saveImage()
         if self.cur > 1:
             self.cur -= 1
@@ -453,7 +450,8 @@ class LabelTool():
             self.cur = idx
             self.loadImage()
     def addNightState(self):
-        self.bboxList.append(self.currentNightState)
+        if self.bboxList[-1] != "DAY" and self.bboxList[-1] != "NIGHT":
+            self.bboxList.append(self.currentNightState)
     def setNightState(self):
         self.currentNightState = self.nightState.get()
         print '[-Set State of sign: ',self.currentNightState,'-]'
